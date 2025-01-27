@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/styles/index.css}">
+    <title>Url Shortner</title>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <h1>URL Shortner</h1>
+
+      <div class="form-wrapper">
+        <form action="#" th:action="@{/url-shortner}" th:object="${url}" method="post" th:if="${shortUrl.url == null}">
+          <div class="input-group">
+            <label for="url">Enter Url</label>
+            <input id="url" type="text" placeholder="https://www.realy-long-web-url-a0e4-o3k3"  th:field="*{url}">
+          </div>
+
+          <button type="submit">Shorten Url</button>
+        </form>
+
+        <div class="code" th:if="${shortUrl.url != null}">
+          <p th:text="${shortUrl.url}" id="shortUrl"></p>
+          <button type="button" onclick="copy()">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let ele = document.getElementById("shortUrl");
+      let url = ele.innerHTML;
+
+      function copy() {
+        navigator.clipboard.writeText(url);
+        alert("Url Copied");
+      }
+    </script>
+  </body>
+</html>

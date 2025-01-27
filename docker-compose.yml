@@ -1,0 +1,14 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=urls
+    volumes:
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data: {}    
