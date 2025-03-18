@@ -24,7 +24,6 @@ public class UrlController {
     return "home";
   }
   
-
   @PostMapping
   public String shortUrl(@ModelAttribute("url") UrlDto request, Model model) {
     UrlDto shortUrl = urlService.shortUrl(request);

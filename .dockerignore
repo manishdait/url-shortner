@@ -1,0 +1,7 @@
+.vscode
+.git
+.gitattributes
+.gitignore
+asset
+target
+README.md

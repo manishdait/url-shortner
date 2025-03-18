@@ -5,7 +5,6 @@ This is a Spring Boot application for URL shortening. It allows users to submit 
 ## Technologies Used
 
 *   Spring Boot
-*   JPA (Java Persistence API)
 *   PostgreSQL
 
 ## Setup
@@ -60,3 +59,5 @@ Once the application is running, the user interface is accessible at:
 ## Result
 
 ![Demo Image](asset/asset1.png)
+
+![Demo Image](asset/asset2.png)
