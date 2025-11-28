@@ -26,6 +26,10 @@
           <button type="button" onclick="copy()">Copy</button>
         </div>
       </div>
+
+      <span th:if="${error != null && error != ''}" class="error">
+        <span th:text="${error}"></span>
+      </span>
     </div>
 
     <script>

@@ -4,3 +4,10 @@ spring:
     - dev
   application:
     name: url-shortner
+resilience4j:
+  ratelimiter:
+    instances:
+      shortenUrlRateLimiter:
+        limit-for-period: 1
+        limit-refresh-period: 10s
+        timeout-duration: 1s # if limit reach then wait for 5 second then fail

@@ -89,3 +89,9 @@ button:hover {
   color: #1d1d1d;
   text-align: center;
 }
+
+.error {
+  display: block;
+  text-align: center;
+  color: red;
+}

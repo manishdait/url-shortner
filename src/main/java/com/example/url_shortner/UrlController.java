@@ -29,10 +29,14 @@ public class UrlController {
 
   @PostMapping("/shorten-url")
   public String shortenUrl(UrlDto request, RedirectAttributes redirectAttributes) {
-    Url url = urlService.shortenUrl(request.url());
-    String shortUrl = "http://localhost:8080/%s".formatted(url.getUuid());
+    try {
+      Url url = urlService.shortenUrl(request.url());
+      String shortUrl = "http://localhost:8080/%s".formatted(url.getUuid());
+      redirectAttributes.addFlashAttribute("short_url", shortUrl);      
+    } catch (Exception e) {
+      redirectAttributes.addFlashAttribute("error", e.getMessage());
+    }
 
-    redirectAttributes.addFlashAttribute("short_url", shortUrl);
     return "redirect:";
   }
 
