@@ -4,6 +4,3 @@ spring:
     - dev
   application:
     name: url-shortner
-
-server:
-  port: 8080

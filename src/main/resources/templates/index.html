@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/styles/index.css}">
+    <title>Url Shortner</title>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <h1>URL Shortner</h1>
+
+      <div class="form-wrapper">
+        <form th:action="@{/shorten-url}" method="post" enctype="multipart/form-data" th:object="${url}">
+          <div class="input-group">
+            <label for="link">Enter Url:</label>
+            <input id="link" type="text" name="url" th:field="*{url}" placeholder="Enter the url" required/>
+          </div>
+
+          <button type="submit">Shorten Url</button>
+        </form>
+
+        <div class="code" id="shortUrlBox" th:if="${short_url != ''}">
+          <p th:text="${short_url}" id="shortUrl"></p>
+          <button type="button" onclick="copy()">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const input = document.getElementById("link");
+      const shortUrl = document.getElementById("shortUrl");
+      const shortUrlBox = document.getElementById("shortUrlBox");
+
+      input.addEventListener("input", () => {
+        if (input.value.trim() !== "") {
+          if (shortUrlBox) shortUrlBox.style.display = "none";
+        } else {
+          if (shortUrlBox) shortUrlBox.style.display = "block";
+        }
+      });
+
+      function copy() {
+        navigator.clipboard.writeText(shortUrl.innerText);
+        alert("Url Copied");
+      }
+    </script>
+  </body>
+</html>

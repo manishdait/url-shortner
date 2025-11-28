@@ -5,7 +5,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.Instant;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,66 +40,64 @@ public class UrlServiceTest {
 
   @Test
   void shouldReturn_urlDto_whenShortenUrl_forNewUrl() {
-    final Url url = new Url(101L, "a4cec1j0", "http://something.com", Instant.now());
-    final UrlDto urldto = new UrlDto("http://something.com");
+    final Url mockResponse = Mockito.mock(Url.class);
+    final String url = "http://something.com";
 
+    when(urlRepository.findByUrl(url)).thenReturn(Optional.empty());
+    when(urlRepository.save(any(Url.class))).thenReturn(mockResponse);
 
-    when(urlRepository.findByUrl(urldto.url())).thenReturn(Optional.empty());
-    when(urlRepository.save(any(Url.class))).thenReturn(url);
+    final Url result = urlService.shortenUrl(url);
 
-    final UrlDto shortUrl = urlService.shortUrl(urldto);
-
-    verify(urlRepository, times(1)).findByUrl(urldto.url());
+    verify(urlRepository, times(1)).findByUrl(url);
     verify(urlRepository, times(1)).save(urlCaptor.capture());
-
-    Url savedUrl = urlCaptor.getValue();
-
-    Assertions.assertThat(savedUrl.getUrl().equals(url.getUrl())).isTrue();
-    Assertions.assertThat(shortUrl).isNotNull();
-    Assertions.assertThat(shortUrl.url().equals(String.format("http://localhost:8080/url-shortner/%s", url.getUuid())));
+    
+    Assertions.assertThat(result).isNotNull();
+    
+    final Url capture = urlCaptor.getValue();
+    
+    Assertions.assertThat(capture.getUrl()).isEqualTo(url);
+    Assertions.assertThat(capture.getUuid()).isNotNull();
+    Assertions.assertThat(capture.getCreatedAt()).isNotNull();
   }
 
   @Test
   void shouldReturn_urlDto_whenShortenUrl_forDuplicateUrl() {
-    final Url url = new Url(101L, "a4cec1j0", "http://something.com", Instant.now());
-    final UrlDto urldto = new UrlDto("http://something.com");
+    final Url mockUrl = Mockito.mock(Url.class);
+    final String url = "http://something.com";
 
-    when(urlRepository.findByUrl(urldto.url())).thenReturn(Optional.of(url));
+    when(urlRepository.findByUrl(url)).thenReturn(Optional.of(mockUrl));
 
-    final UrlDto shortUrl = urlService.shortUrl(urldto);
+    final Url result = urlService.shortenUrl(url);
 
-    verify(urlRepository, times(1)).findByUrl(urldto.url());
+    verify(urlRepository, times(1)).findByUrl(url);
     verify(urlRepository, times(0)).save(any(Url.class));
 
-    Assertions.assertThat(shortUrl).isNotNull();
-    Assertions.assertThat(shortUrl.url().equals(String.format("http://localhost:8080/url-shortner/%s", url.getUuid())));
+    Assertions.assertThat(result).isNotNull();
+    Assertions.assertThat(result).isEqualTo(mockUrl);
   }
 
   @Test
   void shouldReturn_originalUrl_forValidUUID() {
-    final Url url = new Url(101L, "a4cec1j0", "http://something.com", Instant.now());
-    final String uuid = "a4cec1j0";
+    final Url mockUrl = Mockito.mock(Url.class);
+    final String uuid = "uuid";
 
-    when(urlRepository.findByUuid(uuid)).thenReturn(Optional.of(url));
+    when(urlRepository.findByUuid(uuid)).thenReturn(Optional.of(mockUrl));
 
-    final String originalUrl = urlService.getUrl(uuid);
+    final Url result = urlService.redirectUrl(uuid);
 
     verify(urlRepository, times(1)).findByUuid(uuid);
 
-    Assertions.assertThat(originalUrl).isNotNull();
-    Assertions.assertThat(originalUrl.equals("http://something.com"));
+    Assertions.assertThat(result).isNotNull();
+    Assertions.assertThat(result).isEqualTo(mockUrl);
   }
 
   @Test
-  void shouldReturn_nullUrl_forInvalidUUID() {
-    final String uuid = "a4ceww3a";
+  void should_throwExcepiton_forInvalidUUID() {
+    final String uuid = "invalid-uuid";
 
     when(urlRepository.findByUuid(uuid)).thenReturn(Optional.empty());
 
-    final String originalUrl = urlService.getUrl(uuid);
-
-    verify(urlRepository, times(1)).findByUuid(uuid);
-
-    Assertions.assertThat(originalUrl).isNull();
+    Assertions.assertThatThrownBy(() -> urlService.redirectUrl(uuid))
+      .isInstanceOf(RuntimeException.class);
   }
 }

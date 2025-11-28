@@ -1,11 +1,13 @@
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/urls
-    username: postgres
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:url_db
+    username: sa
     password: password
   jpa:
+    database: h2
     hibernate:
-      ddl-auto: update
-    database: postgresql
-  
+      ddl-auto: create-drop
+    show-sql: true
+  cache:
+    type: simple

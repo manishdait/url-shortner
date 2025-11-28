@@ -1,6 +1,7 @@
 package com.example.url_shortner;
 
-import java.time.Instant;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,37 +10,36 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
+@ToString
 @Builder
 @Entity
 @Table(name = "url")
-public class Url {
+public class Url implements Serializable {
   @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "url_seq_generator")
+  @SequenceGenerator(name = "url_seq_generator", sequenceName = "url_seq", initialValue = 101, allocationSize = 1)
   @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "url_sequence_generator")
-  @SequenceGenerator(name = "url_sequence_generator", sequenceName = "url_sequence", initialValue = 101, allocationSize = 1)
   private Long id;
 
-  @Column(name = "uuid", unique = true)
-  @NotBlank(message = "uuid must not be blank")
-  private String uuid;
-
-  @Column(name = "url", columnDefinition = "TEXT")
-  @NotBlank(message = "url must not be blank")
+  @Column(name = "url", nullable = false, unique = true)
   private String url;
 
-  @Column(name = "created_at", updatable = false)
-  @NotNull(message = "created_at must not be null")
-  private Instant createdAt;
+  @Column(name = "uuid", nullable = false, unique = true)
+  private String uuid;
+
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private LocalDate createdAt;
 }
